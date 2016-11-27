@@ -48,14 +48,14 @@ RSpec.describe CoursesController, type: :controller do
 
   describe "POST create" do
   	context "when course doesn't have a title " do
-	  it "doesn't create a record" do
-	    expect { post :create, params: { course: {:descirptoin => "bar"}}}.to change{Course.count}.by(0)
-	  end
+  	  it "doesn't create a record" do
+  	    expect { post :create, params: { course: {:descirptoin => "bar"}}}.to change{Course.count}.by(0)
+  	  end
 
-	  it "render new template" do
-	  	post :create, params:{ course: {:description => "bar"}}
-	  	expect(response).to render_template("new")
-	  end
+  	  it "render new template" do
+  	  	post :create, params:{ course: {:description => "bar"}}
+  	  	expect(response).to render_template("new")
+  	  end
   	end
 
   	context  "when course have a title " do
@@ -70,5 +70,19 @@ RSpec.describe CoursesController, type: :controller do
   	    expect(response).to redirect_to courses_path
   	  end
   	end
+  end
+
+  describe "GET edit" do
+    it "assign course" do
+      course = FactoryGirl.create(:course)
+      get :edit, :id => course.id
+      expect(assigns[:course]).to eq(course)
+    end
+
+    it "render template" do
+      course = FactoryGirl.create(:course)
+      get :edit, :id => course.id
+      expect(response).to render_template("edit")
+    end
   end
 end
