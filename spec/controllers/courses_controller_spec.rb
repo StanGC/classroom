@@ -47,24 +47,28 @@ RSpec.describe CoursesController, type: :controller do
   end
 
   describe "POST create" do
-  	it "doesn't create a record when course doesn't have a title" do
-  	  expect { post :create, params: { course: {:descirptoin => "bar"}}}.to change{Course.count}.by(0)
+  	context "when course doesn't have a title " do
+	  it "doesn't create a record" do
+	    expect { post :create, params: { course: {:descirptoin => "bar"}}}.to change{Course.count}.by(0)
+	  end
+
+	  it "render new template" do
+	  	post :create, params:{ course: {:description => "bar"}}
+	  	expect(response).to render_template("new")
+	  end
   	end
 
-  	it "render new template when course doesn't have title" do
-  	  post :create, params:{ course: {:description => "bar"}}
-  	  expect(response).to render_template("new")
-  	end
+  	context  "when course have a title " do
+  	  it "create a new course record when course has title" do
+  	    course = FactoryGirl.build(:course)
+  	    expect{ post :create, :course => FactoryGirl.attributes_for(:course)}.to change{ Course.count }.by(1)
+  	  end
 
-  	it "create a new course record when course has title" do
-  	  course = FactoryGirl.build(:course)
-  	  expect{ post :create, :course => FactoryGirl.attributes_for(:course)}.to change{ Course.count }.by(1)
-  	end
-
-  	it "redirect to courses_path when course has title" do
-  	  course = FactoryGirl.build(:course)
-  	  post :create, :course => FactoryGirl.attributes_for(:course)
-  	  expect(response).to redirect_to courses_path
+  	  it "redirect to courses_path when course has title" do
+  	    course = FactoryGirl.build(:course)
+  	    post :create, :course => FactoryGirl.attributes_for(:course)
+  	    expect(response).to redirect_to courses_path
+  	  end
   	end
   end
 end
