@@ -99,16 +99,31 @@ RSpec.describe CoursesController, type: :controller do
   end
 
   describe "GET edit" do
+    let(:user) { FactoryGirl.create(:user) }
+    let(:course_with_owner) { FactoryGirl.create(:course, user: user) }
+    let(:course_without_owner) { FactoryGirl.create(:course) }
+
+    before { sign_in_user }
     it "assign course" do
-      course = FactoryGirl.create(:course)
-      get :edit, :id => course.id
-      expect(assigns[:course]).to eq(course)
+      get :edit, id: course_with_owner.id
+      expect(assigns[:course]).to eq(course_with_owner)
     end
 
     it "render template" do
-      course = FactoryGirl.create(:course)
-      get :edit, :id => course.id
+      get :edit, id: course_with_owner.id
       expect(response).to render_template("edit")
+    end
+
+    it_behaves_like "require_course_owner" do
+      let(:action) {
+        get :edit, id: course_without_owner.id
+      }
+    end
+
+    it_behaves_like "require_sign_in" do
+      let(:action) {
+        get :edit, id: course_without_owner.id
+      }
     end
   end
 

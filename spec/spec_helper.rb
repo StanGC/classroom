@@ -1,5 +1,5 @@
 require 'shoulda-matchers'
-
+require 'factory_girl_rails'
 require "bundler/setup"
 ::Bundler.require(:default, :test)
 
