@@ -128,39 +128,50 @@ RSpec.describe CoursesController, type: :controller do
   end
 
   describe "PUT update" do
+    let(:user) { FactoryGirl.create(:user) }
+    let(:course_with_owner) { FactoryGirl.create(:course, user: user) }
+    let(:course_without_owner) { FactoryGirl.create(:course) }
+    before { sign_in_user }
     context "when course have title" do
       it "assigns @course" do
-        course = FactoryGirl.create(:course) 
-        put :update, id: course.id, course: { title: "Title", description: "Description" }
-        expect(assigns[:course]).to eq(course)
+        put :update, id: course_with_owner.id, course: { title: "Title", description: "Description" }
+        expect(assigns[:course]).to eq(course_with_owner)
       end
 
       it "change value" do
-        course = FactoryGirl.create(:course)
-        put :update, id: course.id, course: { title: "Title", description: "Description" }
+        put :update, id: course_with_owner.id, course: { title: "Title", description: "Description" }
         expect(assigns[:course].title).to eq("Title")
         expect(assigns[:course].description).to eq("Description")
       end
 
       it "redirect_to course_path" do
-        course = FactoryGirl.create(:course)
-        put :update, id: course.id, course: { title: "Title", description: "Description" }
-        expect(response).to redirect_to course_path(course)
+        put :update, id: course_with_owner.id, course: { title: "Title", description: "Description" }
+        expect(response).to redirect_to course_path(course_with_owner)
       end
     end
 
     context "when course doesn't have title " do
       it "doesn't update a record " do
-        course = FactoryGirl.create(:course)
-        put :update , id: course.id, course: { title: "", description: "Description" }
-        expect(course.description).not_to eq("Description")
+        put :update , id: course_with_owner.id, course: { title: "", description: "Description" }
+        expect(course_with_owner.description).not_to eq("Description")
       end
 
       it "render edit template" do
-        course = FactoryGirl.create(:course)
-        put :update , id: course.id, course: { title: "", description: "Description" }
+        put :update , id: course_with_owner.id, course: { title: "", description: "Description" }
         expect(response).to render_template("edit")                
       end
+    end
+
+    it_behaves_like "require_sign_in" do
+      let(:action) {
+        put :update, id: course_without_owner.id, course: { title: "Title", description: "Description" }
+      }
+    end
+
+    it_behaves_like "require_sign_in" do
+      let(:action) {
+        put :update, id: course_without_owner.id, course: { title: "Title", description: "Description" }
+      }
     end
   end
 
