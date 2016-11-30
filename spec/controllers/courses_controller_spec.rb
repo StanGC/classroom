@@ -176,21 +176,27 @@ RSpec.describe CoursesController, type: :controller do
   end
 
   describe "DELETE destroy" do
+    let(:user) { FactoryGirl.create(:user) }
+    let!(:course) { FactoryGirl.create(:course, user: user) }
+    before { sign_in_user }
     it "assigns @course" do
-      course = FactoryGirl.create(:course)
       delete :destroy, id: course.id
       expect(assigns[:course]).to eq(course)
     end
 
     it "delete a record" do
-      course = FactoryGirl.create(:course)
       expect { delete :destroy, id: course.id }.to change{Course.count}.by(-1)
     end
 
     it "redirect to courses_path" do
-      course = FactoryGirl.create(:course)
       delete :destroy, id: course.id
       expect(response).to redirect_to courses_path
+    end
+
+    it_behaves_like "require_sign_in" do
+      let(:action) {
+        delete :destroy, id: course.id
+      }
     end
   end
 
