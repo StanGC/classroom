@@ -45,7 +45,6 @@ group :development, :test do
   gem "factory_girl_rails", :require => false
   gem "shoulda-matchers", "3.1.1", require: false
   gem 'capybara', '~> 2.11.0'
-  gem "database_rewinder"
 end
 
 group :development do
