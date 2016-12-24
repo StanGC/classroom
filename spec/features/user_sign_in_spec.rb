@@ -5,24 +5,30 @@ describe "user sign in", :type => :feature do
     User.create(:email => "user@example.com", :password => "password")
   end
 
-  it "sign_in the user" do
+  scenario "good credentials" do
     new_session_page.sign_in "user@example.com", "password"
 
     expect(page).to have_content "user@example.com"
   end
-end
 
-private
+  scenario "bad credentials" do
+    new_session_page.sign_in "XXX@example.com", "password"
 
-def home_page
-  PageObjects::Pages::Home.new
-end
+    expect(page).not_to have_content "user@example.com"
+  end
 
-def new_session_page
-  home_page.go
-  navbar.sign_in
-end
+  private
 
-def navbar
-  PageObjects::Application::Navbar.new
+  def home_page
+    PageObjects::Pages::Home.new
+  end
+
+  def navbar
+    PageObjects::Application::Navbar.new
+  end
+
+  def new_session_page
+    home_page.go
+    navbar.sign_in
+  end
 end
