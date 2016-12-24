@@ -1,20 +1,28 @@
-require "rails_helper"
+require 'rails_helper'
 
-RSpec.feature "User authentication" do
-  scenario "user signs out" do
-    create(:user, email: "user@example.com", password: "password")
+describe "user sign out", :type => :feature do
 
-    visit "/users/sign_in"
+  it "sign out the user" do
+    user = User.create(:email => 'user@example.com', :password => 'password')
+    new_session_page.sign_in 'user@example.com', 'password'
+    navbar.sign_out user.email
 
-    within(".new_user") do
-      fill_in "Email", with: "user@example.com"
-      fill_in "Password", with: "password"
-    end
-
-    click_button "Log in"
-
-    click_link "Logout"
-
-    page.should have_text "user@example.com"
+    page.should have_content 'user@example.com'
   end
+
+  private
+
+  def home_page
+    PageObjects::Pages::Home.new
+  end
+
+  def navbar
+    PageObjects::Application::Navbar.new
+  end
+
+  def new_session_page
+    home_page.go
+    navbar.sign_in
+  end
+
 end
