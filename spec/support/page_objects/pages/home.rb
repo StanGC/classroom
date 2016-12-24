@@ -1,10 +1,16 @@
-require_relative "base"
+require_relative "../base"
 
 module PageObjects
   module Pages
     class Home < Base
       def go
-        visit root_path
+        visit "/"
+        self
+      end
+
+      def add_course
+        click_on "New course"
+        PageObjects::Courses::Form.New
       end
     end
   end
